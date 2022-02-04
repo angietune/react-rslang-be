@@ -59,20 +59,10 @@ app.use(
   )
 );
 
-app.post('/', loader.single('avatar'), async (req, res) => {
-  try {
-    const result = await cloudinary.uploader.upload(req.file.path);
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-  fs.unlink(req.file.path);
-});
-
-app.post('/', loader.single('avatar'), async (req, res) => {
+app.post('/ml_default', loader.single('avatar'), async (req, res) => {
   try {
     const result = await cloudinary.uploader.upload(req.file.path, {
-      upload_preset: 'avatarPreset'
+      upload_preset: 'avatar'
     });
     res.send(result);
   } catch (error) {
