@@ -59,7 +59,7 @@ app.use(
   )
 );
 
-app.post('/ml_default', loader.single('avatar'), async (req, res) => {
+app.post('/upload-avatar', loader.single('avatar'), async (req, res) => {
   try {
     const result = await cloudinary.uploader.upload(req.file.path, {
       upload_preset: 'avatar'
@@ -70,10 +70,6 @@ app.post('/ml_default', loader.single('avatar'), async (req, res) => {
   }
   fs.unlink(req.file.path);
 });
-
-const port = process.env.PORT || 3000;
-
-app.listen(port, () => console.log(`http://localhost:${port}`));
 
 app.use('/words', wordRouter);
 
