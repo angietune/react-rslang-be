@@ -10,6 +10,11 @@ const helmet = require('helmet');
 require('express-async-errors');
 const { NOT_FOUND } = require('http-status-codes');
 
+require('dotenv').config();
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
+const fs = require('fs/promises');
+
 const winston = require('./common/logging');
 const wordRouter = require('./resources/words/word.router');
 const signinRouter = require('./resources/authentication/signin.router');
@@ -25,6 +30,7 @@ const { userIdValidator } = require('./utils/validation/validator');
 
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
+const loader = multer({ dest: path.join(__dirname, 'tmp') });
 
 app.use(helmet());
 app.use(cors());
@@ -52,6 +58,18 @@ app.use(
     }
   )
 );
+
+app.post('/upload-avatar', loader.single('avatar'), async (req, res) => {
+  try {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      upload_preset: 'avatar'
+    });
+    res.send(result);
+  } catch (error) {
+    res.send(error);
+  }
+  fs.unlink(req.file.path);
+});
 
 app.use('/words', wordRouter);
 
